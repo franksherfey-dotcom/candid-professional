@@ -186,12 +186,59 @@
             display: block;
         }
         
+        .profile-banner {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #0a66c2 0%, #005a96 100%);
+            border-radius: 12px 12px 0 0;
+            margin-bottom: -50px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e8e8e8;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: flex-start;
+            padding: 60px 24px 24px;
+            position: relative;
+            z-index: 2;
+            gap: 24px;
+        }
+        
+        .profile-avatar {
+            font-size: 80px;
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid white;
+            flex-shrink: 0;
+        }
+        
+        .profile-meta {
+            flex: 1;
+            padding-top: 20px;
+        }
+        
         .result-text {
             font-size: 13px;
-            line-height: 1.6;
+            line-height: 1.8;
             color: #333;
             white-space: pre-wrap;
             word-break: break-word;
+            padding: 0 24px 24px;
+            max-height: 600px;
+            overflow-y: auto;
         }
         
         .error {
@@ -295,7 +342,14 @@
                 </div>
                 
                 <div class="result-content" id="resultContent">
-                    <div class="result-text" id="resultText"></div>
+                    <div class="profile-banner"></div>
+                    <div class="profile-card">
+                        <div class="profile-header">
+                            <div class="profile-avatar">👤</div>
+                            <div class="profile-meta" id="profileMeta"></div>
+                        </div>
+                        <div class="result-text" id="resultText"></div>
+                    </div>
                 </div>
                 
                 <div class="error" id="error"></div>
@@ -388,6 +442,30 @@
                 }
                 
                 const profile = data.profile;
+                
+                // Extract name and headline from profile
+                const lines = profile.split('\n');
+                let name = '';
+                let headline = '';
+                
+                for (let i = 0; i < Math.min(5, lines.length); i++) {
+                    const line = lines[i].trim();
+                    if (line && !line.startsWith('#') && !line.startsWith('*') && !line.startsWith('-') && !line.includes('Translation') && !line.includes(':') && line.length > 3 && line.length < 100) {
+                        if (!name && line.match(/^[A-Z]/)) {
+                            name = line;
+                        } else if (!headline && name && line.length > 10) {
+                            headline = line;
+                            break;
+                        }
+                    }
+                }
+                
+                const profileMeta = document.getElementById('profileMeta');
+                profileMeta.innerHTML = `
+                    <div style="font-size: 24px; font-weight: 700; color: #000; margin-bottom: 4px;">${name || 'Your Name'}</div>
+                    <div style="font-size: 16px; color: #666; margin-bottom: 12px;">${headline || 'Your Professional Title'}</div>
+                    <div style="font-size: 13px; color: #0a66c2; cursor: pointer;">View full profile →</div>
+                `;
                 
                 // Display result
                 resultText.textContent = profile;
