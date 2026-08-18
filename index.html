@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Candid Professional - Your Satirical Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(180deg, #f5f7fa 0%, #e8ebf0 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 20px;
+        }
+        
+        .brand {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            color: #0a66c2;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 12px;
+            font-weight: 700;
+            color: #000;
+            line-height: 1.2;
+        }
+        
+        .header p {
+            font-size: 18px;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin-bottom: 48px;
+        }
+        
+        .panel {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+            border: 1px solid #e8e8e8;
+        }
+        
+        .panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: #000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 400px;
+            padding: 14px;
+            border: 2px solid #e5e5e5;
+            border-radius: 6px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', monospace;
+            font-size: 13px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #0a66c2;
+            box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
+        }
+        
+        .textarea-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-generate {
+            background: #0a66c2;
+            color: white;
+        }
+        
+        .btn-generate:hover:not(:disabled) {
+            background: #005a96;
+            box-shadow: 0 4px 12px rgba(10, 102, 194, 0.25);
+        }
+        
+        .btn-generate:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .btn-copy {
+            background: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        
+        .btn-copy:hover {
+            background: #e8e8e8;
+            border-color: #ccc;
+        }
+        
+        .output-section {
+            position: relative;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e5e5e5;
+            border-top-color: #0a66c2;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .result-content {
+            display: none;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .result-content.active {
+            display: block;
+        }
+        
+        .result-text {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #333;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 16px;
+            border-radius: 6px;
+            margin-top: 16px;
+            font-size: 13px;
+            display: none;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .error.active {
+            display: block;
+        }
+        
+        .example-text {
+            background-color: #fef3cd;
+            padding: 14px;
+            border-radius: 8px;
+            margin-top: 14px;
+            font-size: 13px;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .copy-feedback {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        
+        .copy-feedback.active {
+            opacity: 1;
+        }
+        
+        .footer {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 60px;
+            opacity: 0.8;
+        }
+        
+        #emptyState {
+            text-align: center;
+            color: #999;
+            padding: 60px 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 28px;
+            }
+            
+            textarea {
+                min-height: 300px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="brand">Your Satirical Professional Profile</div>
+            <h1>The Candid Professional</h1>
+            <p>Transform your LinkedIn profile into a candid, comedic version of your career story. What you're really thinking, finally on the record.</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="panel">
+                <div class="panel-title"><span style="font-size: 20px;">📋</span> Your LinkedIn Profile</div>
+                <textarea id="inputProfile" placeholder="Paste your LinkedIn profile text here. Include your headline, about section, experience, skills, and any posts you're proud of. The more content, the better the candid version."></textarea>
+                <div class="textarea-label">💡 Pro tip: Copy everything from your LinkedIn profile page, including headline, about section, and recent posts.</div>
+            </div>
+            
+            <div class="panel output-section">
+                <div class="panel-title"><span style="font-size: 20px;">😄</span> Your Candid Profile</div>
+                
+                <div class="loading" id="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Generating your satirical masterpiece...</p>
+                </div>
+                
+                <div class="result-content" id="resultContent">
+                    <div class="result-text" id="resultText"></div>
+                </div>
+                
+                <div class="error" id="error"></div>
+                
+                <div class="button-group" id="buttonGroup" style="display: none;">
+                    <button class="btn-copy" onclick="copyToClipboard()">📋 Copy to Clipboard</button>
+                    <button class="btn-copy" onclick="downloadAsText()">⬇️ Download</button>
+                </div>
+                
+                <div id="emptyState" style="text-align: center; color: #999; padding: 60px 20px;">
+                    <p style="font-size: 14px;">Your candid profile will appear here</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel" style="max-width: 700px; margin: 0 auto; background: #f8f9fb;">
+            <div class="panel-title"><span style="font-size: 20px;">🚀</span> How It Works</div>
+            <ol style="line-height: 1.8; color: #666; padding-left: 20px; font-size: 14px;">
+                <li>Go to <strong>your LinkedIn profile</strong></li>
+                <li><strong>Select all</strong> (Cmd+A or Ctrl+A) and <strong>copy</strong> everything</li>
+                <li><strong>Paste</strong> it in the left panel above</li>
+                <li>Click <strong>"Generate My Candid Profile"</strong></li>
+                <li>Copy or download your results</li>
+                <li>Share with friends who appreciate good corporate satire (or keep it private—we don't judge)</li>
+            </ol>
+            
+            <div class="example-text">
+                <strong>💡 Pro Tip:</strong> The better your original profile, the funnier the candid version. Include your headline, about section, experience bullets, and recent posts for maximum comedy potential.
+            </div>
+            
+            <div class="example-text" style="background-color: #e7f3ff; border-left-color: #0a66c2; color: #0a66c2;">
+                <strong>ℹ️ What This Does:</strong> Creates a satirical version of your career story. The humor is on corporate culture, not on you. Perfect for a laugh with people who get the joke.
+            </div>
+        </div>
+        
+        <div style="margin-top: 48px;">
+            <button class="btn-generate" id="generateBtn" onclick="generateProfile()" style="width: 100%; padding: 16px; font-size: 16px; font-weight: 700;">✨ Generate My Candid Profile</button>
+        </div>
+        
+        <div class="footer">
+            <p>Your satirical professional profile of record. Made for those who think corporate culture is comedy. 🎭</p>
+        </div>
+    </div>
+    
+    <div class="copy-feedback" id="copyFeedback">Copied to clipboard!</div>
+    
+    <script>
+        async function generateProfile() {
+            const input = document.getElementById('inputProfile').value.trim();
+            const generateBtn = document.getElementById('generateBtn');
+            const loading = document.getElementById('loading');
+            const resultContent = document.getElementById('resultContent');
+            const resultText = document.getElementById('resultText');
+            const error = document.getElementById('error');
+            const emptyState = document.getElementById('emptyState');
+            const buttonGroup = document.getElementById('buttonGroup');
+            
+            if (!input) {
+                error.textContent = '❌ Please paste your LinkedIn profile text first.';
+                error.classList.add('active');
+                return;
+            }
+            
+            // Clear previous state
+            error.classList.remove('active');
+            resultContent.classList.remove('active');
+            buttonGroup.style.display = 'none';
+            emptyState.style.display = 'block';
+            
+            // Show loading
+            loading.classList.add('active');
+            generateBtn.disabled = true;
+            generateBtn.textContent = 'Generating...';
+            
+            try {
+                const response = await fetch('/api/generate-profile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        profileText: input,
+                    }),
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to generate profile');
+                }
+                
+                const profile = data.profile;
+                
+                // Display result
+                resultText.textContent = profile;
+                resultContent.classList.add('active');
+                emptyState.style.display = 'none';
+                buttonGroup.style.display = 'flex';
+                
+                // Store for copying
+                window.currentProfile = profile;
+                
+            } catch (err) {
+                error.textContent = `❌ ${err.message}`;
+                error.classList.add('active');
+            } finally {
+                loading.classList.remove('active');
+                generateBtn.disabled = false;
+                generateBtn.textContent = '✨ Generate My Candid Profile';
+            }
+        }
+        
+        function copyToClipboard() {
+            if (!window.currentProfile) return;
+            
+            navigator.clipboard.writeText(window.currentProfile).then(() => {
+                const feedback = document.getElementById('copyFeedback');
+                feedback.classList.add('active');
+                setTimeout(() => feedback.classList.remove('active'), 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+        
+        function downloadAsText() {
+            if (!window.currentProfile) return;
+            
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(window.currentProfile));
+            element.setAttribute('download', 'candid-profile.txt');
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+        
+        // Allow Cmd/Ctrl+Enter to generate
+        document.getElementById('inputProfile').addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                generateProfile();
+            }
+        });
+    </script>
+</body>
+</html>
